@@ -1,26 +1,31 @@
-#VPATH = ./single:
-OBJECT = main.o cal.o single.o
+CC ?= gcc
 
-main: $(OBJECT)
-	gcc -o main $(OBJECT)
+W_DIR ?= $(shell pwd)
 
-main.o: cal.h
-	gcc -c main.c
+CFLAGS ?= -O3 -g0 -I$(W_DIR)\
+		  -I$(W_DIR)/single
 
-cal.o:
-	gcc -c cal.c
+BIN = main
+MAINSRC = main.c
 
-single.o: 
-	gcc -c single/single.c
+CSRCS +=$(W_DIR)/single/single.c
 
-#single.o: 
-#	gcc -c single.c
+OBJEXT ?= .o
+COBJS = $(CSRCS:.c=$(OBJEXT))
+MAINOBJ = $(MAINSRC:.c=$(OBJEXT))
+
+all:default
+
+%.o: %.c
+	@$(CC)  $(CFLAGS) -c $< -o $@
+	@echo "CC $<"
+
+default: $(COBJS) $(MAINOBJ)
+	$(CC) -o $(BIN) $(MAINOBJ) $(COBJS)
 
 .PHONY:
 	clean
 
-
 clean:
 	rm -rf *.o
 	rm -rf main 
-
